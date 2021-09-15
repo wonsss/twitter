@@ -1,9 +1,15 @@
+import { dbService } from "fbase";
 import React, { useState } from "react";
 
 const Home = () => {
   const [tweet, setTweet] = useState("");
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
+    await dbService.collection("tweets").add({
+      tweet,
+      createdAt: Date.now(),
+    });
+    setTweet("");
   };
   const onChange = (event) => {
     const {
@@ -19,7 +25,7 @@ const Home = () => {
           onChange={onChange}
           type="text"
           placeholder="What's on your mind?"
-          maxLenght={120}
+          maxLength={120}
         />
         <input type="submit" value="tweet" />
       </form>
