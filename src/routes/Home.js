@@ -1,21 +1,24 @@
 import Tweet from "components/Tweet";
 import { dbService, storageService } from "fbase";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const Home = ({ userObj }) => {
   const [tweet, setTweet] = useState("");
   const [tweets, setTweets] = useState([]);
-  const [attachment, setAttachment] = useState();
+  const [attachment, setAttachment] = useState("");
 
   useEffect(() => {
-    dbService.collection("tweets").onSnapshot((snapshot) => {
-      const tweetArray = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTweets(tweetArray);
-    });
+    dbService
+      .collection("tweets")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const tweetArray = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTweets(tweetArray);
+      });
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -58,7 +61,12 @@ const Home = ({ userObj }) => {
     };
     reader.readAsDataURL(theFile);
   };
-  const onClearAttachment = () => setAttachment(null);
+  const fileInput = useRef();
+
+  const onClearAttachment = () => {
+    setAttachment("");
+    fileInput.current.value = null;
+  };
 
   return (
     <div>
@@ -70,7 +78,12 @@ const Home = ({ userObj }) => {
           placeholder="What's on your mind?"
           maxLength={120}
         />
-        <input type="file" accept="image/*" onChange={onFileChange} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={onFileChange}
+          ref={fileInput}
+        />
         <input type="submit" value="tweet" />
         {attachment && (
           <div>

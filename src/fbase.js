@@ -14,6 +14,10 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+//이미지 첨부 없이 텍스트만 tweet했을 때, 오류나서 아래 두 줄의 코드 첨부함
+const firestore = firebase.firestore();
+firestore.settings({ ignoreUndefinedProperties: true });
+
 export const firebaseInstance = firebase;
 
 export const authService = firebase.auth();
