@@ -12,6 +12,15 @@ function App() {
           uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
         });
+        if (user.displayName == null) {
+          setUserObj({
+            displayName: "Anonymous",
+            uid: user.uid,
+            updateProfile: (args) => user.updateProfile(args),
+          });
+        }
+      } else {
+        setUserObj(null);
       }
       setInit(true);
     });
